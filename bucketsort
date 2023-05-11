@@ -1,0 +1,88 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+void bucketSort(int arr[], int n, int bucketSize) {
+    int minVal = arr[0];
+    int maxVal = arr[0];
+    for (int i = 1; i < n; i++) {
+        if (arr[i] < minVal) {
+            minVal = arr[i];
+        }
+        else if (arr[i] > maxVal) {
+            maxVal = arr[i];
+        }
+    }
+    int numBuckets = (maxVal - minVal) / bucketSize + 1;
+    int** buckets = new int*[numBuckets];
+    for (int i = 0; i < numBuckets; i++) {
+        buckets[i] = nullptr;
+    }
+    for (int i = 0; i < n; i++) {
+        int bucketIndex = (arr[i] - minVal) / bucketSize;
+        int* bucket = buckets[bucketIndex];
+        int* newNode = new int;
+        *newNode = arr[i];
+        if (bucket == nullptr) {
+            buckets[bucketIndex] = newNode;
+        }
+        else {
+            while (bucket != nullptr) {
+                if (*bucket > arr[i]) {
+                    int temp = *bucket;
+                    *bucket = arr[i];
+                    arr[i] = temp;
+                }
+                if (bucket == buckets[bucketIndex]) {
+                    newNode->next = bucket;
+                    buckets[bucketIndex] = newNode;
+                    break;
+                }
+                else if (bucket->next == nullptr || *bucket->next > arr[i]) {
+                    newNode->next = bucket->next;
+                    bucket->next = newNode;
+                    break;
+                }
+                bucket = bucket->next;
+            }
+        }
+    }
+    int index = 0;
+    for (int i = 0; i < numBuckets; i++) {
+        int* bucket = buckets[i];
+        while (bucket != nullptr) {
+            arr[index] = *bucket;
+            index++;
+            bucket = bucket->next;
+        }
+    }
+    for (int i = 0; i < numBuckets; i++) {
+        int* bucket = buckets[i];
+        while (bucket != nullptr) {
+            int* temp = bucket;
+            bucket = bucket->next;
+            delete temp;
+        }
+    }
+    delete[] buckets;
+}
+int main() {
+    int n;
+    cout << "Enter the size of the array: ";
+    cin >> n;
+
+    int arr[n];
+    cout << "Enter the elements of the array: ";
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+    int bucketSize;
+    cout << "Enter the bucket size: ";
+    cin >> bucketSize;
+    bucketSort(arr, n, bucketSize);
+    cout << "Sorted array: ";
+    for (int i = 0; i < n; i++) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+    return 0;
+}
