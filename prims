@@ -1,0 +1,75 @@
+#include <iostream>
+#include <climits>
+using namespace std;
+const int MAX = 100;
+int graph[MAX][MAX];
+int parent[MAX];
+int key[MAX];
+bool mstSet[MAX];
+int findMinKey(int key[], int n) {
+    int minKey = INT_MAX, minIdx;
+    for (int i = 0; i < n; i++) {
+        if (!mstSet[i] && key[i] < minKey) {
+            minKey = key[i];
+            minIdx = i;
+        }
+    }
+    return minIdx;
+}
+
+void printMST(int parent[], int n) {
+    cout << "Edge \tWeight\n";
+    for (int i = 1; i < n; i++) {
+        cout << parent[i] << " - " << i << "\t" << graph[i][parent[i]] << "\n";
+    }
+}
+
+void primMST(int graph[MAX][MAX], int n) {
+    for (int i = 0; i < n; i++) {
+        key[i] = INT_MAX;
+        mstSet[i] = false;
+    }
+
+    key[0] = 0;
+    parent[0] = -1;
+
+    for (int i = 0; i < n - 1; i++) {
+        int u = findMinKey(key, n);
+        mstSet[u] = true;
+
+        for (int v = 0; v < n; v++) {
+            if (graph[u][v] && !mstSet[v] && graph[u][v] < key[v]) {
+                parent[v] = u;
+                key[v] = graph[u][v];
+            }
+        }
+    }
+
+    printMST(parent, n);
+}
+
+int main() {
+    int n, m;
+    cout << "Enter number of vertices: ";
+    cin >> n;
+    cout << "Enter number of edges: ";
+    cin >> m;
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            graph[i][j] = 0;
+        }
+    }
+
+    cout << "Enter edges and their weights: \n";
+    for (int i = 0; i < m; i++) {
+        int u, v, w;
+        cin >> u >> v >> w;
+        graph[u][v] = w;
+        graph[v][u] = w;
+    }
+
+    primMST(graph, n);
+
+    return 0;
+}
