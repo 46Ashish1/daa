@@ -1,0 +1,47 @@
+#include <iostream>
+#include <queue>
+using namespace std;
+const int MAXN = 100; 
+int adjList[MAXN][MAXN]; 
+bool visited[MAXN]; 
+void bfs(int start, int n) {
+    queue<int> q;
+    visited[start] = true;
+    q.push(start);
+    while (!q.empty()) {
+        int curr = q.front();
+        q.pop();
+        cout << curr << " ";
+        for (int i = 0; i < n; i++) {
+            if (adjList[curr][i] && !visited[i]) {
+                visited[i] = true;
+                q.push(i);
+            }
+        }
+    }
+}
+
+int main() {
+    int n, m;
+    cout << "Enter the number of vertices and edges: ";
+    cin >> n >> m;
+    cout << "Enter the edges: " << endl;
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        adjList[u][v] = 1;
+        adjList[v][u] = 1; 
+    }
+    cout << "BFS traversal of the graph: ";
+    for (int i = 0; i < n; i++) {
+        visited[i] = false;
+    }
+    for (int i = 0; i < n; i++) {
+        if (!visited[i]) {
+            bfs(i, n);
+        }
+    }
+    cout << endl;
+
+    return 0;
+}
